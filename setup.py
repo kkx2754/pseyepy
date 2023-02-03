@@ -6,37 +6,7 @@ import os, sys
 import warnings
 import subprocess
 
-### install libusb
-# keeping this slightly hacky approach to guarantee that the correct libusb is used and is easily findable
-if sys.platform in ('darwin','linux','linux2'):
-    python_data_path = get_paths()['data']
-
-    wd = os.path.join('.','pseyepy','ext')
-    subprocess.call('tar -jxf libusb-1.0.21.tar.bz2', cwd=wd, shell=True)
-
-    wd = os.path.join('.','pseyepy','ext','libusb-1.0.21')
-    subprocess.call('sudo ./configure --prefix={}'.format(python_data_path), cwd=wd, shell=True)
-    subprocess.call('make clean', cwd=wd, shell=True)
-    subprocess.call('sudo make', cwd=wd, shell=True)
-    subprocess.call('sudo make install', cwd=wd, shell=True)
-
-    wd = os.path.join('.','pseyepy','ext')
-    subprocess.call('mkdir -p include && mkdir -p lib', cwd=wd, shell=True)
-
-    src_include = os.path.join(python_data_path, 'include', 'libusb-1.0')
-    dest_include = os.path.join('.', 'pseyepy', 'ext', 'include', 'libusb-1.0')
-    subprocess.call(['ln -s {} {}'.format(src_include, dest_include)], shell=True, cwd='.')
-
-    for ln in ['libusb-1.0.0.dylib', 'libusb-1.0.a', 'libusb-1.0.dylib', 'libusb-1.0.la']:
-        src_lib = os.path.join(python_data_path, 'lib', ln)
-        dest_lib = os.path.join('.', 'pseyepy', 'ext', 'lib', ln)
-        subprocess.call(['ln -s {} {}'.format(src_lib, dest_lib)], shell=True, cwd='.')
-
-    libusb_incl = ['pseyepy/ext/include/libusb-1.0']
-    libusb_libpath = 'pseyepy/ext/lib'
-    libs = ['usb-1.0']
-
-elif sys.platform.startswith('win'):
+if True:
     # precompiled library from:
     # https://sourceforge.net/projects/libusb/files/libusb-1.0/libusb-1.0.21/libusb-1.0.21.7z/download
     # need visualstudio prior to 2013, for this precompiled library
@@ -59,7 +29,7 @@ extensions = [  Extension('pseyepy.cameras',
                 language='c++',
                 extra_compile_args=['-std=c++11'],
                 extra_link_args=['-std=c++11'],
-                include_dirs=['pseyepy/src']+libusb_incl,
+                include_dirs=['pseyepy\\ext\\win\\include\\', 'pseyepy\\src'],
                 library_dirs=[libusb_libpath],
                 libraries=libs,
             )]
@@ -67,7 +37,7 @@ extensions = [  Extension('pseyepy.cameras',
 ### run setup
 setup(  name='pseyepy',
         version='0.0',
-        description='pseyepy camera package',
+        description='pseyepy camera package  SETUP FIXED BY MirageDev',
         author='Ben Deverett',
         author_email='deverett@princeton.edu',
         url='https://github.com/bensondaled/pseyepy',
